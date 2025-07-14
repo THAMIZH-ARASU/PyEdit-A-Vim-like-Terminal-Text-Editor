@@ -114,15 +114,29 @@ python main.py [filename]
 
 ---
 
-## Contribution
+## Screenshots
 
-Contributions are welcome! Please open issues or submit pull requests for bug fixes, new features, or improvements.
+<p align="center">
+  <img src="images/1.png" alt="sample_output">
+</p>
+
+<p align="center">
+  <img src="images/2.png" alt="sample_output">
+</p>
+
+<p align="center">
+  <img src="images/3.png" alt="sample_output">
+</p>
+
+<p align="center">
+  <img src="images/4.png" alt="sample_output">
+</p>
 
 ---
 
-## License
+## Contribution
 
-[Specify your license here, e.g., MIT, GPL, etc.]
+Contributions are welcome! Please open issues or submit pull requests for bug fixes, new features, or improvements.
 
 ---
 
@@ -133,6 +147,6 @@ Contributions are welcome! Please open issues or submit pull requests for bug fi
 
 ---
 
-## Screenshots
+## License
 
-_Add screenshots or GIFs here to showcase the editor in action._
+[Specify your license here, e.g., MIT, GPL, etc.]
