@@ -103,14 +103,28 @@ python main.py [filename]
 ### Search Mode (`/`)
 - Type pattern, Enter to search, ESC to cancel
 
-### File Explorer
-| Key         | Action                        |
-|-------------|------------------------------|
-| j/k         | Move down/up                 |
-| Enter       | Open file or enter directory |
-| ..          | Go up to parent directory    |
-| r           | Refresh file list            |
-| ESC         | Return to normal/editor      |
+## File Explorer (Ranger/Yazi-Style)
+
+The file explorer is a two-pane sidebar:
+- **Left pane:** Shows the directory stack and contents. Navigate with your keyboard.
+- **Right pane:** Instantly previews the selected file (first 20 lines).
+- **Toggle the explorer:**
+  - Press `e` in normal mode
+  - Or type `:explorer` in command mode (works from any mode)
+
+### Explorer Navigation Keys
+| Key         | Action                                 |
+|-------------|----------------------------------------|
+| j / Down    | Move down                              |
+| k / Up      | Move up                                |
+| l / Right / Enter | Enter directory or open file      |
+| h / Left / Backspace | Go up to parent directory      |
+| r           | Refresh file list                      |
+| q / ESC     | Exit file explorer                     |
+
+- When you select a file and press Enter/l/right, it opens in the editor and exits explorer mode.
+- When you select a directory and press Enter/l/right, it enters that directory.
+- You can also use `:explorer` at any time to open the explorer.
 
 ---
 
@@ -148,4 +162,4 @@ Contributions are welcome! Please open issues or submit pull requests for bug fi
 
 ## License
 
-[Specify your license here, e.g., MIT, GPL, etc.]
+This project is licensed under the MIT License.

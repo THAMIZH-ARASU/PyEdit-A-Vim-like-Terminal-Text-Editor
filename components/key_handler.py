@@ -1,6 +1,7 @@
 import curses
 from utils.mode import Mode
 from utils.position import Position
+import os
 
 
 class KeyHandler:
@@ -101,8 +102,11 @@ class KeyHandler:
         if key == 27:  # ESC
             self.editor.mode = Mode.NORMAL
         elif key == ord('\n') or key == ord('\r'):
+            prev_mode = self.editor.mode
             self.editor.execute_command()
-            self.editor.mode = Mode.NORMAL
+            # Only set to NORMAL if not switched to another mode
+            if self.editor.mode == prev_mode:
+                self.editor.mode = Mode.NORMAL
         elif key in (curses.KEY_BACKSPACE, 127, 8):
             self.editor.command_buffer = self.editor.command_buffer[:-1]
         elif 32 <= key <= 126:
@@ -122,14 +126,19 @@ class KeyHandler:
         return False
         
     def _handle_file_explorer_mode(self, key: int) -> bool:
-        if key == 27:  # ESC
+        fe = self.editor.file_explorer
+        if key == 27 or key == ord('q'):
             self.editor.mode = Mode.NORMAL
-        elif key == ord('\n') or key == ord('\r'):
-            self.editor.open_selected_file()
         elif key == ord('j') or key == curses.KEY_DOWN:
-            self.editor.file_explorer.move_down()
+            fe.move_down()
         elif key == ord('k') or key == curses.KEY_UP:
-            self.editor.file_explorer.move_up()
+            fe.move_up()
+        elif key == ord('l') or key == curses.KEY_RIGHT or key == ord('\n') or key == ord('\r'):
+            result = fe.enter()
+            if isinstance(result, str) and os.path.isfile(result):
+                self.editor.open_file_from_explorer(result)
+        elif key == ord('h') or key == curses.KEY_LEFT or key in (curses.KEY_BACKSPACE, 127, 8):
+            fe.back()
         elif key == ord('r'):
-            self.editor.file_explorer.refresh()
+            fe.refresh()
         return False

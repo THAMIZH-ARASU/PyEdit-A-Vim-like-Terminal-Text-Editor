@@ -124,12 +124,12 @@ HELP:
         height, width = self.stdscr.getmaxyx()
         
         # Calculate layout
-        explorer_width = self.explorer_width if self.show_file_explorer else 0
+        explorer_width = self.explorer_width if self.mode == Mode.FILE_EXPLORER else 0
         text_width = width - explorer_width
         text_height = height - 1  # Reserve space for status bar
         
         # Draw file explorer
-        if self.show_file_explorer or self.mode == Mode.FILE_EXPLORER:
+        if self.mode == Mode.FILE_EXPLORER:
             self._draw_file_explorer(height - 1, explorer_width)
             
         # Draw main text area
@@ -147,28 +147,37 @@ HELP:
         """Draw file explorer sidebar"""
         if width <= 0:
             return
-            
-        # Draw border
-        for i in range(height):
-            if i < len(self.file_explorer.items):
-                item = self.file_explorer.items[i]
-                if i == self.file_explorer.selected_index:
+        # Two-pane: left = dirs, right = preview
+        left_width = width // 2
+        right_width = width - left_width
+        explorer = self.file_explorer
+        # Draw left pane (directory stack)
+        y = 0
+        for depth, (dir_path, items, sel_idx) in enumerate(zip(explorer.dir_stack, explorer.items, explorer.selected_indices)):
+            if y >= height:
+                break
+            # Show dir name
+            dir_name = os.path.basename(dir_path) or dir_path
+            self.stdscr.addstr(y, 0, f"[{dir_name}]".ljust(left_width - 1)[:left_width - 1])
+            y += 1
+            for i, item in enumerate(items):
+                if y >= height:
+                    break
+                prefix = '>' if i == sel_idx else ' '
+                line = f"{prefix} {item}"
+                if i == sel_idx:
                     self.stdscr.attron(curses.A_REVERSE)
-                    
-                display_text = item[:width-1]
-                self.stdscr.addstr(i, 0, display_text.ljust(width-1))
-                
-                if i == self.file_explorer.selected_index:
+                self.stdscr.addstr(y, 0, line.ljust(left_width - 1)[:left_width - 1])
+                if i == sel_idx:
                     self.stdscr.attroff(curses.A_REVERSE)
-            else:
-                self.stdscr.addstr(i, 0, " " * (width-1))
-                
-        # Draw vertical separator
-        for i in range(height):
-            try:
-                self.stdscr.addstr(i, width-1, "|")
-            except curses.error:
-                pass
+                y += 1
+        # Draw right pane (preview)
+        preview = explorer.get_preview(max_lines=height)
+        if preview:
+            for i, line in enumerate(preview):
+                if i >= height:
+                    break
+                self.stdscr.addstr(i, left_width, line[:right_width - 1])
                 
     def _draw_text_area(self, height: int, width: int, offset_x: int) -> None:
         """Draw main text editing area with horizontal scrolling for long lines"""
@@ -263,7 +272,7 @@ HELP:
             self.scroll_offset.row = self.buffer.cursor.row - text_height + 1
             
         # Horizontal scrolling
-        explorer_width = self.explorer_width if self.show_file_explorer else 0
+        explorer_width = self.explorer_width if self.mode == Mode.FILE_EXPLORER else 0
         text_width = width - explorer_width
         
         if self.buffer.cursor.col < self.scroll_offset.col:
@@ -378,7 +387,7 @@ HELP:
             else:
                 self.status_bar.set_message(f"Error loading file: {filename}")
         elif cmd == "explorer":
-            self.show_file_explorer = not self.show_file_explorer
+            self.mode = Mode.FILE_EXPLORER
         elif cmd == "help":
             self.show_help()
         else:
@@ -410,6 +419,15 @@ HELP:
         elif os.path.isdir(selected_path):
             self.file_explorer.navigate_to(selected_path)
             
+    def open_file_from_explorer(self, filepath: str):
+        if self.buffer.load_file(filepath):
+            self.buffer.cursor = Position(0, 0)
+            self.scroll_offset = Position(0, 0)
+            self.status_bar.set_message(f"Opened {filepath}")
+        else:
+            self.status_bar.set_message(f"Error opening file: {filepath}")
+        self.mode = Mode.NORMAL
+
     def _execute_command(self, command: Command) -> None:
         """Execute command and add to history"""
         command.execute(self)
