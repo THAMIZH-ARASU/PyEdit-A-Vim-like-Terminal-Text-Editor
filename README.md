@@ -143,7 +143,6 @@ Contributions are welcome! Please open issues or submit pull requests for bug fi
 ## Credits
 
 - Inspired by Vim and other modal editors.
-- Developed by [Your Name].
 
 ---
 
