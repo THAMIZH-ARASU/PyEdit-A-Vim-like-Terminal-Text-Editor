@@ -62,6 +62,7 @@ python py_edit.py [filename]
 - **FILE EXPLORER:** File browser (press `e` or `:explorer`)
 
 ### Normal Mode Keys
+<div align="center">
 <table>
   <tr>
     <th style="text-align:center;">Key</th>
@@ -112,8 +113,10 @@ python py_edit.py [filename]
     <td style="text-align:center;">Quit</td>
   </tr>
 </table>
+</div>
 
 ### Insert Mode
+<div align="center">
 <table>
   <tr>
     <th style="text-align:center;">Key</th>
@@ -136,8 +139,10 @@ python py_edit.py [filename]
     <td style="text-align:center;">AI autocomplete (if enabled)</td>
   </tr>
 </table>
+</div>
 
 ### Visual Mode
+<div align="center">
 <table>
   <tr>
     <th style="text-align:center;">Key</th>
@@ -156,8 +161,10 @@ python py_edit.py [filename]
     <td style="text-align:center;">Return to normal mode</td>
   </tr>
 </table>
+</div>
 
 ### Command Mode (`:`)
+<div align="center">
 <table>
   <tr>
     <th style="text-align:center;">Command</th>
@@ -192,6 +199,7 @@ python py_edit.py [filename]
     <td style="text-align:center;">Show help manual</td>
   </tr>
 </table>
+</div>
 
 ### Search Mode (`/`)
 - Type pattern, Enter to search, ESC to cancel
@@ -206,6 +214,7 @@ The file explorer is a two-pane sidebar:
   - Or type `:explorer` in command mode (works from any mode)
 
 ### Explorer Navigation Keys
+<div align="center">
 <table>
   <tr>
     <th style="text-align:center;">Key</th>
@@ -236,6 +245,7 @@ The file explorer is a two-pane sidebar:
     <td style="text-align:center;">Exit file explorer</td>
   </tr>
 </table>
+</div>
 
 - When you select a file and press Enter/l/right, it opens in the editor and exits explorer mode.
 - When you select a directory and press Enter/l/right, it enters that directory.
