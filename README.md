@@ -1,19 +1,20 @@
  # PyEdit - Vim-like Terminal Text Editor
 
-PyEdit is a terminal-based text editor inspired by Vim, implemented in Python. It provides a modal editing experience, file explorer, search, undo/redo, and more, all within your terminal. PyEdit is designed for speed, efficiency, and extensibility, making it a great choice for developers who love working in the terminal.
+PyEdit is a terminal-based text editor inspired by Vim, implemented in Python. It provides a modal editing experience, file explorer with live preview, search, undo/redo, and more—all within your terminal. PyEdit is designed for speed, efficiency, and extensibility, making it a great choice for developers who love working in the terminal.
 
 ---
 
 ## Features
 
-- **Modal Editing:** Supports Normal, Insert, Visual, Command, Search, and File Explorer modes.
-- **Vim-like Keybindings:** Familiar navigation and editing keys (h/j/k/l, i, v, :, /, etc.).
-- **File Explorer Sidebar:** Browse and open files and directories from within the editor.
+- **Modal Editing:** Normal, Insert, Visual, Command, Search, and File Explorer modes.
+- **Vim-like Keybindings:** Familiar navigation and editing keys (`h/j/k/l`, `i`, `v`, `:`, `/`, etc.).
+- **File Explorer Sidebar:** Browse and open files and directories, with a live preview pane that resizes with your terminal.
 - **Search:** Powerful in-buffer and file search with regex support.
 - **Undo/Redo:** Full undo/redo support for editing operations.
 - **Status Bar:** Displays mode, file name, modification status, and cursor position.
-- **Command Mode:** Save, quit, open files, and more with :commands.
+- **Command Mode:** Save, quit, open files, and more with `:commands`.
 - **Visual Mode:** Select, copy, and delete text visually.
+- **AI Autocomplete:** (Optional) Press Tab in insert mode for AI-powered code suggestions (requires configuration).
 - **Lightweight & Fast:** Minimal dependencies, runs in any terminal with Python and curses.
 
 ---
@@ -43,7 +44,7 @@ PyEdit is a terminal-based text editor inspired by Vim, implemented in Python. I
 Run the editor from your terminal:
 
 ```bash
-python main.py [filename]
+python py_edit.py [filename]
 ```
 - If `[filename]` is provided, it will open or create that file.
 - If not, a new buffer is opened.
@@ -81,6 +82,7 @@ python main.py [filename]
 | ESC         | Return to normal mode        |
 | Enter       | New line                     |
 | Backspace   | Delete                       |
+| Tab         | AI autocomplete (if enabled) |
 
 ### Visual Mode
 | Key         | Action                        |
@@ -107,7 +109,7 @@ python main.py [filename]
 
 The file explorer is a two-pane sidebar:
 - **Left pane:** Shows the directory stack and contents. Navigate with your keyboard.
-- **Right pane:** Instantly previews the selected file (first 20 lines).
+- **Right pane:** Instantly previews the selected file (up to the full width of your terminal).
 - **Toggle the explorer:**
   - Press `e` in normal mode
   - Or type `:explorer` in command mode (works from any mode)
