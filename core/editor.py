@@ -14,6 +14,7 @@ from core.search_engine import SearchEngine
 from utils.language import detect_language # type: ignore
 from utils.mode import Mode
 from utils.position import Position
+from utils.logger import log_autocomplete_action
 
 
 class Editor:
@@ -431,19 +432,38 @@ HELP:
         self.mode = Mode.NORMAL
 
     def autocomplete(self):
-        """Trigger Groq autocomplete and show suggestion in status bar."""
+        """Trigger Groq autocomplete, insert suggestion at cursor, and show in status bar."""
         try:
             filename = self.buffer.filename or ""
             language = detect_language(filename)
             buffer_lines = self.buffer.lines
             cursor_position = self.buffer.cursor
+            log_autocomplete_action("START", f"filename={filename}, language={language}, cursor={cursor_position}")
             suggestion = get_groq_suggestion(buffer_lines, cursor_position, language)
             if suggestion:
+                # Insert suggestion at cursor, handling multi-line completions
+                lines = suggestion.split('\n')
+                row, col = cursor_position.row, cursor_position.col
+                # Insert first line at cursor
+                cmd = InsertCommand(Position(row, col), lines[0])
+                self._execute_command(cmd)
+                # Insert subsequent lines as new lines
+                for i, line in enumerate(lines[1:], 1):
+                    # Insert newline after previous line
+                    self.buffer.insert_newline(Position(row + i - 1, len(self.buffer.get_line(row + i - 1))))
+                    cmd = InsertCommand(Position(row + i, 0), line)
+                    self._execute_command(cmd)
+                # Move cursor to end of last inserted line
+                self.buffer.cursor.row = row + len(lines) - 1
+                self.buffer.cursor.col = len(lines[-1])
                 self.status_bar.set_message(f"Autocomplete: {suggestion}")
+                log_autocomplete_action("SUGGESTION", suggestion)
             else:
                 self.status_bar.set_message("No suggestion.")
+                log_autocomplete_action("NO_SUGGESTION")
         except Exception as e:
             self.status_bar.set_message(f"Autocomplete error: {e}")
+            log_autocomplete_action("ERROR", str(e))
 
     def _execute_command(self, command: Command) -> None:
         """Execute command and add to history"""
