@@ -1,5 +1,5 @@
 import os
-from core.grok_autocomplete import get_groq_suggestion, get_groq_chat_response
+from core.autocomplete import get_groq_suggestion, get_groq_chat_response
 from utils.position import Position
 
 # Helper to call Groq API with a custom prompt and input

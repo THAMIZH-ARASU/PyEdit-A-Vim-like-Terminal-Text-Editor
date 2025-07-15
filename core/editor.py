@@ -9,7 +9,7 @@ from components.key_handler import KeyHandler
 from components.status_bar import StatusBar
 from core.buffer import Buffer
 from core.file_explorer import FileExplorer
-from core.grok_autocomplete import get_groq_suggestion # type: ignore
+from core.autocomplete import get_groq_suggestion # type: ignore
 from core.search_engine import SearchEngine
 from utils.language import detect_language # type: ignore
 from utils.mode import Mode
