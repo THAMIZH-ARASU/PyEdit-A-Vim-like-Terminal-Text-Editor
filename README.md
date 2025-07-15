@@ -4,6 +4,10 @@ PyEdit is a terminal-based text editor inspired by Vim, implemented in Python. I
 
 ---
 
+<p align="center">
+  <img src="images/0.png" alt="sample_output">
+</p>
+
 ## Features
 
 - **Modal Editing:** Normal, Insert, Visual, Command, Search, and File Explorer modes.
@@ -285,10 +289,6 @@ Type `:ai <action> [args]` in command mode. Example:
 ---
 
 ## Screenshots
-
-<p align="center">
-  <img src="images/0.png" alt="sample_output">
-</p>
 
 <p align="center">
   <img src="images/1.png" alt="sample_output">
