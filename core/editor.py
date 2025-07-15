@@ -78,6 +78,29 @@ HELP:
   q or ESC  Close help
 """
     
+    home_text = r"""
+                                                       
+    ██████╗ ██╗   ██╗     ███████╗██████╗ ██╗███████╗  
+    ██╔══██╗╚██╗ ██╔╝     ██╔════╝██╔══██╗██║  ██╔══╝  
+    ██████╔╝ ╚████╔╝█████╗█████╗  ██   ██║██║  ██║     
+    ██╔═══╝   ╚██╔╝ ╚════╝██╔══╝  ██   ██║██║  ██║     
+    ██║        ██║        ███████╗██████╔╝██║  ██║     
+    ╚═╝        ╚═╝        ╚══════╝╚═════╝ ╚═╝  ╚═╝     
+
+    Welcome to PyEdit - A Modern, Vim-inspired Terminal Text Editor
+
+    • Modal editing (Normal, Insert, Visual, Command, Search, Explorer)
+    • Fast, lightweight, and extensible
+    • File explorer, search, undo/redo, and more
+    • AI-powered autocomplete (Tab in insert mode)
+    • Familiar Vim keybindings
+
+    :q      Quit      :w      Save      :e <file>  Open file
+    :help   Manual    :explorer Toggle file explorer   :home   Toggle home
+
+    PyEdit is open source. See README.md for more info.
+    """
+    
     def __init__(self, stdscr):
         self.stdscr = stdscr
         self.mode = Mode.NORMAL
@@ -103,9 +126,11 @@ HELP:
         # Display settings
         self.show_file_explorer = False
         self.explorer_width = 30
+        self.show_home_page = True
         
         # Initialize curses
-        curses.curs_set(1)
+        curses.curs_set(1)  # Make cursor visible and blinking
+        curses.cbreak()     # React to keys instantly
         self.stdscr.keypad(True)
         self.stdscr.timeout(100)
         
@@ -126,42 +151,44 @@ HELP:
         self.stdscr.clear()
         height, width = self.stdscr.getmaxyx()
         
-        # Calculate layout
-        explorer_width = self.explorer_width if self.mode == Mode.FILE_EXPLORER else 0
-        text_width = width - explorer_width
-        text_height = height - 1  # Reserve space for status bar
-        
-        # Draw file explorer
-        if self.mode == Mode.FILE_EXPLORER:
-            self._draw_file_explorer(height - 1, explorer_width)
+        if getattr(self, 'show_home_page', False):
+            self.show_home(height, width)
+        else:
+            # Calculate layout
+            explorer_width = self.explorer_width if self.mode == Mode.FILE_EXPLORER else 0
+            text_width = width - explorer_width
+            text_height = height - 1  # Reserve space for status bar
             
-        # Draw main text area
-        self._draw_text_area(text_height, text_width, explorer_width)
-        
-        # Draw status bar
-        self._draw_status_bar(height - 1, width)
-        
-        # Position cursor
-        self._position_cursor(explorer_width)
+            # Draw file explorer
+            if self.mode == Mode.FILE_EXPLORER:
+                self._draw_file_explorer(height - 1, explorer_width)
+                
+            # Draw main text area
+            self._draw_text_area(text_height, text_width, explorer_width)
+            
+            # Draw status bar
+            self._draw_status_bar(height - 1, width)
+            
+            # Position cursor
+            self._position_cursor(explorer_width)
         
         self.stdscr.refresh()
         
     def _draw_file_explorer(self, height: int, width: int) -> None:
-        """Draw file explorer sidebar"""
+        """Draw file explorer sidebar with fixed-width navigation (30 cols) and wide preview."""
         if width <= 0:
             return
-        # Two-pane: left = dirs, right = preview
-        left_width = width // 2
-        right_width = width - left_width
+        nav_width = min(30, width - 1) if width > 30 else width
+        preview_width = max(1, width - nav_width)
         explorer = self.file_explorer
-        # Draw left pane (directory stack)
         y = 0
+        
+        # Draw navigation pane
         for depth, (dir_path, items, sel_idx) in enumerate(zip(explorer.dir_stack, explorer.items, explorer.selected_indices)):
             if y >= height:
                 break
-            # Show dir name
             dir_name = os.path.basename(dir_path) or dir_path
-            self.stdscr.addstr(y, 0, f"[{dir_name}]".ljust(left_width - 1)[:left_width - 1])
+            self.stdscr.addstr(y, 0, f"[{dir_name}]".ljust(nav_width - 1)[:nav_width - 1])
             y += 1
             for i, item in enumerate(items):
                 if y >= height:
@@ -170,18 +197,41 @@ HELP:
                 line = f"{prefix} {item}"
                 if i == sel_idx:
                     self.stdscr.attron(curses.A_REVERSE)
-                self.stdscr.addstr(y, 0, line.ljust(left_width - 1)[:left_width - 1])
+                self.stdscr.addstr(y, 0, line.ljust(nav_width - 1)[:nav_width - 1])
                 if i == sel_idx:
                     self.stdscr.attroff(curses.A_REVERSE)
                 y += 1
-        # Draw right pane (preview)
-        preview = explorer.get_preview(max_lines=height)
-        if preview:
-            for i, line in enumerate(preview):
-                if i >= height:
-                    break
-                self.stdscr.addstr(i, left_width, line[:right_width - 1])
-                
+        
+        # Draw preview pane (moved outside the loop)
+        selected_path = explorer.get_selected_path()
+        if selected_path and os.path.isfile(selected_path):
+            try:
+                with open(selected_path, 'r', encoding='utf-8') as f:
+                    lines = [line.rstrip('\n') for _, line in zip(range(height), f)]
+                if lines:
+                    for i, line in enumerate(lines):
+                        if i >= height:
+                            break
+                        try:
+                            self.stdscr.addstr(i, nav_width, line[:preview_width - 1])
+                        except curses.error:
+                            pass
+                else:
+                    try:
+                        self.stdscr.addstr(0, nav_width, "[Empty file]"[:preview_width - 1])
+                    except curses.error:
+                        pass
+            except Exception:
+                try:
+                    self.stdscr.addstr(0, nav_width, "[Preview unavailable]"[:preview_width - 1])
+                except curses.error:
+                    pass
+        else:
+            try:
+                self.stdscr.addstr(0, nav_width, "Select a file to preview"[:preview_width - 1])
+            except curses.error:
+                pass
+                    
     def _draw_text_area(self, height: int, width: int, offset_x: int) -> None:
         """Draw main text editing area with horizontal scrolling for long lines"""
         line_count = self.buffer.get_line_count()
@@ -390,9 +440,12 @@ HELP:
             else:
                 self.status_bar.set_message(f"Error loading file: {filename}")
         elif cmd == "explorer":
+            self.show_home_page = False
             self.mode = Mode.FILE_EXPLORER
         elif cmd == "help":
             self.show_help()
+        elif cmd == "home":
+            self.show_home_page = not getattr(self, 'show_home_page', False)
         else:
             self.status_bar.set_message(f"Unknown command: {cmd}")
             
@@ -514,3 +567,15 @@ HELP:
                 scroll -= 1
         del win
         self.refresh_display()
+
+    def show_home(self, height, width):
+        lines = self.home_text.strip('\n').split('\n')
+        start_y = max((height - len(lines)) // 2, 0)
+        for i, line in enumerate(lines):
+            x = max((width - len(line)) // 2, 0)
+            try:
+                self.stdscr.addstr(start_y + i, x, line)
+            except Exception:
+                pass
+        # Draw status bar at the bottom
+        self._draw_status_bar(height - 1, width)
