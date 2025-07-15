@@ -131,6 +131,10 @@ The file explorer is a two-pane sidebar:
 ## Screenshots
 
 <p align="center">
+  <img src="images/0.png" alt="sample_output">
+</p>
+
+<p align="center">
   <img src="images/1.png" alt="sample_output">
 </p>
 
