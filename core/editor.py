@@ -158,20 +158,19 @@ HELP:
             explorer_width = self.explorer_width if self.mode == Mode.FILE_EXPLORER else 0
             text_width = width - explorer_width
             text_height = height - 1  # Reserve space for status bar
-            
+
             # Draw file explorer
             if self.mode == Mode.FILE_EXPLORER:
                 self._draw_file_explorer(height - 1, explorer_width)
-                
-            # Draw main text area
-            self._draw_text_area(text_height, text_width, explorer_width)
-            
+            else:
+                self._draw_text_area(text_height, text_width, explorer_width)
+
             # Draw status bar
             self._draw_status_bar(height - 1, width)
-            
+
             # Position cursor
             self._position_cursor(explorer_width)
-        
+
         self.stdscr.refresh()
         
     def _draw_file_explorer(self, height: int, width: int) -> None:
@@ -204,6 +203,8 @@ HELP:
         
         # Draw preview pane (moved outside the loop)
         selected_path = explorer.get_selected_path()
+        # DEBUG: Print the selected path and whether it is a file
+        print(f"[DEBUG] Previewing: {selected_path} | isfile: {os.path.isfile(selected_path)}")
         if selected_path and os.path.isfile(selected_path):
             try:
                 with open(selected_path, 'r', encoding='utf-8') as f:
