@@ -509,7 +509,7 @@ HELP:
                     self.refresh_display()
                 # Always show popup for doc, explain, review, search, commitmsg, chat
                 elif action in ["doc", "explain", "review", "search", "commitmsg", "chat"] and result:
-                    self._show_ai_popup(result)
+                    self._show_ai_popup(result, heading=f"AI {action.capitalize()}")
                 # Fallback: show in status bar
                 else:
                     self.status_bar.set_message(result or "No AI response.")
@@ -649,11 +649,11 @@ HELP:
         # Draw status bar at the bottom
         self._draw_status_bar(height - 1, width)
 
-    def _show_ai_popup(self, text):
+    def _show_ai_popup(self, text, heading=None):
         # Show a scrollable popup window for long AI responses
         lines = text.strip().split('\n')
         maxy, maxx = self.stdscr.getmaxyx()
-        win_height = min(len(lines) + 2, maxy - 2)
+        win_height = min(len(lines) + 4, maxy - 2)  # +2 for box, +2 for heading
         win_width = min(max(len(line) for line in lines) + 4, maxx - 2)
         win = curses.newwin(win_height, win_width, (maxy - win_height) // 2, (maxx - win_width) // 2)
         win.keypad(True)
@@ -661,7 +661,15 @@ HELP:
         while True:
             win.clear()
             win.box()
-            for i in range(win_height - 2):
+            # Draw heading centered at the top
+            if heading:
+                heading_str = f" {heading} "
+                x = max((win_width - len(heading_str)) // 2, 1)
+                try:
+                    win.addstr(0, x, heading_str, curses.A_BOLD)
+                except Exception:
+                    pass
+            for i in range(win_height - 3):
                 idx = i + scroll
                 if idx < len(lines):
                     win.addstr(i + 1, 2, lines[idx][:win_width - 4])
@@ -669,7 +677,7 @@ HELP:
             key = win.getch()
             if key in (ord('q'), 27):  # q or ESC
                 break
-            elif key == curses.KEY_DOWN and scroll < len(lines) - (win_height - 2):
+            elif key == curses.KEY_DOWN and scroll < len(lines) - (win_height - 3):
                 scroll += 1
             elif key == curses.KEY_UP and scroll > 0:
                 scroll -= 1
