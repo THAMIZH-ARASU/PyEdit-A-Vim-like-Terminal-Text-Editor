@@ -61,8 +61,9 @@ python py_edit.py [filename]
 - **SEARCH:** Search text (press `/`)
 - **FILE EXPLORER:** File browser (press `e` or `:explorer`)
 
-### Normal Mode Keys
+
 <div align="center">
+  <p><b>Normal Mode Keys </b></p>
 <table>
   <tr>
     <th style="text-align:center;">Key</th>
@@ -115,8 +116,8 @@ python py_edit.py [filename]
 </table>
 </div>
 
-### Insert Mode
 <div align="center">
+  <p><b>Insert Mode</b></p>
 <table>
   <tr>
     <th style="text-align:center;">Key</th>
@@ -140,9 +141,9 @@ python py_edit.py [filename]
   </tr>
 </table>
 </div>
-
-### Visual Mode
+ 
 <div align="center">
+  <p><b>Visual Mode</b></p>
 <table>
   <tr>
     <th style="text-align:center;">Key</th>
@@ -163,8 +164,8 @@ python py_edit.py [filename]
 </table>
 </div>
 
-### Command Mode (`:`)
 <div align="center">
+  <p><b>Command Mode (`:`)</b></p>
 <table>
   <tr>
     <th style="text-align:center;">Command</th>
@@ -213,8 +214,8 @@ The file explorer is a two-pane sidebar:
   - Press `e` in normal mode
   - Or type `:explorer` in command mode (works from any mode)
 
-### Explorer Navigation Keys
 <div align="center">
+  <p><b>Explorer Navigation Keys</b></p>
 <table>
   <tr>
     <th style="text-align:center;">Key</th>
