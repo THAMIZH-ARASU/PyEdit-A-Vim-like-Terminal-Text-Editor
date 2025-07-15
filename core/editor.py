@@ -161,7 +161,7 @@ HELP:
 
             # Draw file explorer
             if self.mode == Mode.FILE_EXPLORER:
-                self._draw_file_explorer(height - 1, explorer_width)
+                self._draw_file_explorer(height - 1, width)
             else:
                 self._draw_text_area(text_height, text_width, explorer_width)
 
@@ -178,7 +178,7 @@ HELP:
         if width <= 0:
             return
         nav_width = min(30, width - 1) if width > 30 else width
-        preview_width = max(1, width - nav_width)
+        preview_width = max(10, width - nav_width)  # Minimum preview width of 10
         explorer = self.file_explorer
         y = 0
         
@@ -187,7 +187,7 @@ HELP:
             if y >= height:
                 break
             dir_name = os.path.basename(dir_path) or dir_path
-            self.stdscr.addstr(y, 0, f"[{dir_name}]".ljust(nav_width - 1)[:nav_width - 1])
+            self.stdscr.addstr(y, 0, f"[{dir_name}]".ljust(nav_width)[:nav_width])
             y += 1
             for i, item in enumerate(items):
                 if y >= height:
@@ -196,40 +196,45 @@ HELP:
                 line = f"{prefix} {item}"
                 if i == sel_idx:
                     self.stdscr.attron(curses.A_REVERSE)
-                self.stdscr.addstr(y, 0, line.ljust(nav_width - 1)[:nav_width - 1])
+                self.stdscr.addstr(y, 0, line.ljust(nav_width)[:nav_width])
                 if i == sel_idx:
                     self.stdscr.attroff(curses.A_REVERSE)
                 y += 1
         
         # Draw preview pane (moved outside the loop)
         selected_path = explorer.get_selected_path()
-        # DEBUG: Print the selected path and whether it is a file
         print(f"[DEBUG] Previewing: {selected_path} | isfile: {os.path.isfile(selected_path)}")
-        if selected_path and os.path.isfile(selected_path):
-            try:
-                with open(selected_path, 'r', encoding='utf-8') as f:
-                    lines = [line.rstrip('\n') for _, line in zip(range(height), f)]
-                if lines:
-                    for i, line in enumerate(lines):
-                        if i >= height:
-                            break
+        if preview_width >= 10:
+            if selected_path and os.path.isfile(selected_path):
+                try:
+                    with open(selected_path, 'r', encoding='utf-8') as f:
+                        lines = [line.rstrip('\n') for _, line in zip(range(height), f)]
+                    if lines:
+                        for i, line in enumerate(lines):
+                            if i >= height:
+                                break
+                            try:
+                                self.stdscr.addstr(i, nav_width, line[:preview_width])
+                            except curses.error:
+                                pass
+                    else:
                         try:
-                            self.stdscr.addstr(i, nav_width, line[:preview_width - 1])
+                            self.stdscr.addstr(0, nav_width, "[Empty file]"[:preview_width])
                         except curses.error:
                             pass
-                else:
+                except Exception:
                     try:
-                        self.stdscr.addstr(0, nav_width, "[Empty file]"[:preview_width - 1])
+                        self.stdscr.addstr(0, nav_width, "[Preview unavailable]"[:preview_width])
                     except curses.error:
                         pass
-            except Exception:
+            else:
                 try:
-                    self.stdscr.addstr(0, nav_width, "[Preview unavailable]"[:preview_width - 1])
+                    self.stdscr.addstr(0, nav_width, "Select a file to preview"[:preview_width])
                 except curses.error:
                     pass
         else:
             try:
-                self.stdscr.addstr(0, nav_width, "Select a file to preview"[:preview_width - 1])
+                self.stdscr.addstr(0, nav_width, "[Window too narrow for preview]"[:width - nav_width])
             except curses.error:
                 pass
                     
