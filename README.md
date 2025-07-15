@@ -15,6 +15,7 @@ PyEdit is a terminal-based text editor inspired by Vim, implemented in Python. I
 - **Command Mode:** Save, quit, open files, and more with `:commands`.
 - **Visual Mode:** Select, copy, and delete text visually.
 - **AI Autocomplete:** (Optional) Press Tab in insert mode for AI-powered code suggestions (requires configuration).
+- **AI Tools:** Use `:ai <action>` commands for code refactoring, documentation, explanation, translation, code generation, and more (see below).
 - **Lightweight & Fast:** Minimal dependencies, runs in any terminal with Python and curses.
 
 ---
@@ -251,6 +252,35 @@ The file explorer is a two-pane sidebar:
 - When you select a file and press Enter/l/right, it opens in the editor and exits explorer mode.
 - When you select a directory and press Enter/l/right, it enters that directory.
 - You can also use `:explorer` at any time to open the explorer.
+
+---
+
+## AI Tools
+
+PyEdit features a suite of AI-powered tools accessible via the command mode:
+
+### Usage
+Type `:ai <action> [args]` in command mode. Example:
+```
+:ai refactor
+:ai doc
+:ai explain
+:ai testgen
+:ai review
+:ai nl2code create a function that sorts a list
+:ai translate javascript
+:ai search file I/O
+:ai commitmsg
+:ai chat How do I use decorators in Python?
+:ai snippet HTTP GET request in Python
+```
+
+### Actions
+- **refactor, nl2code, translate, snippet, testgen:**
+  - The buffer is automatically updated with the AI's code output.
+  - A status message confirms the update.
+- **doc, explain, review, search, commitmsg, chat:**
+  - The result is always shown in a scrollable popup window, even for short responses.
 
 ---
 

@@ -15,6 +15,7 @@ from utils.language import detect_language # type: ignore
 from utils.mode import Mode
 from utils.position import Position
 from utils.logger import log_autocomplete_action
+import core.ai_tools as ai_tools
 
 
 class Editor:
@@ -452,6 +453,68 @@ HELP:
             self.show_help()
         elif cmd == "home":
             self.show_home_page = not getattr(self, 'show_home_page', False)
+        elif cmd.startswith(":ai") or cmd.startswith("ai ") or cmd.startswith("ai:") or cmd.startswith("ai_") or cmd.startswith("ai.") or cmd.startswith("ai/") or cmd.startswith("ai-") or cmd.startswith("ai"):
+            # Parse :ai <action> [args]
+            parts = cmd.split()
+            if len(parts) < 2:
+                self.status_bar.set_message("Usage: :ai <action> [args]")
+                return
+            action = parts[1].lower()
+            args = parts[2:]
+            buffer_lines = self.buffer.lines
+            cursor_position = self.buffer.cursor
+            language = None
+            result = None
+            try:
+                code_actions = ["refactor", "nl2code", "translate", "snippet", "testgen"]
+                if action == "refactor":
+                    result = ai_tools.ai_refactor(buffer_lines, cursor_position, language)
+                elif action == "doc":
+                    result = ai_tools.ai_doc(buffer_lines, cursor_position, language)
+                elif action == "explain":
+                    result = ai_tools.ai_explain(buffer_lines, cursor_position, language)
+                elif action == "testgen":
+                    result = ai_tools.ai_testgen(buffer_lines, cursor_position, language)
+                elif action == "review":
+                    result = ai_tools.ai_review(buffer_lines, cursor_position, language)
+                elif action == "nl2code":
+                    instruction = ' '.join(args)
+                    result = ai_tools.ai_nl2code(instruction)
+                elif action == "translate":
+                    target_language = args[0] if args else "python"
+                    result = ai_tools.ai_translate(buffer_lines, cursor_position, target_language)
+                elif action == "search":
+                    query = ' '.join(args)
+                    result = ai_tools.ai_search(query, [])
+                elif action == "commitmsg":
+                    # For now, use the buffer as the diff
+                    diff = '\n'.join(buffer_lines)
+                    result = ai_tools.ai_commitmsg(diff)
+                elif action == "chat":
+                    user_message = ' '.join(args)
+                    result = ai_tools.ai_chat([], user_message)
+                elif action == "snippet":
+                    description = ' '.join(args)
+                    result = ai_tools.ai_snippet(description)
+                else:
+                    self.status_bar.set_message(f"Unknown AI action: {action}")
+                    return
+                # If the action is code-producing, update the buffer
+                if action in code_actions and result:
+                    # Replace buffer content with AI result
+                    self.buffer.lines = result.split('\n')
+                    self.buffer.cursor = Position(0, 0)
+                    self.scroll_offset = Position(0, 0)
+                    self.status_bar.set_message(f"Buffer updated by AI: {action}")
+                    self.refresh_display()
+                # Always show popup for doc, explain, review, search, commitmsg, chat
+                elif action in ["doc", "explain", "review", "search", "commitmsg", "chat"] and result:
+                    self._show_ai_popup(result)
+                # Fallback: show in status bar
+                else:
+                    self.status_bar.set_message(result or "No AI response.")
+            except Exception as e:
+                self.status_bar.set_message(f"AI error: {e}")
         else:
             self.status_bar.set_message(f"Unknown command: {cmd}")
             
@@ -585,3 +648,30 @@ HELP:
                 pass
         # Draw status bar at the bottom
         self._draw_status_bar(height - 1, width)
+
+    def _show_ai_popup(self, text):
+        # Show a scrollable popup window for long AI responses
+        lines = text.strip().split('\n')
+        maxy, maxx = self.stdscr.getmaxyx()
+        win_height = min(len(lines) + 2, maxy - 2)
+        win_width = min(max(len(line) for line in lines) + 4, maxx - 2)
+        win = curses.newwin(win_height, win_width, (maxy - win_height) // 2, (maxx - win_width) // 2)
+        win.keypad(True)
+        scroll = 0
+        while True:
+            win.clear()
+            win.box()
+            for i in range(win_height - 2):
+                idx = i + scroll
+                if idx < len(lines):
+                    win.addstr(i + 1, 2, lines[idx][:win_width - 4])
+            win.refresh()
+            key = win.getch()
+            if key in (ord('q'), 27):  # q or ESC
+                break
+            elif key == curses.KEY_DOWN and scroll < len(lines) - (win_height - 2):
+                scroll += 1
+            elif key == curses.KEY_UP and scroll > 0:
+                scroll -= 1
+        del win
+        self.refresh_display()

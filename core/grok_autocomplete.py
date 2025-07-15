@@ -25,13 +25,14 @@ def extract_code_from_response(response_text):
     ]
     return '\n'.join(code_lines).strip()
 
-def get_groq_suggestion(buffer_lines, cursor_position, language, api_key=None):
+def get_groq_suggestion(buffer_lines, cursor_position, language, api_key=None, custom_prompt=None):
     """
     Calls the Groq API (OpenAI-compatible) to get an autocomplete suggestion.
     buffer_lines: List[str] - lines of the current buffer
     cursor_position: Position - current cursor position (row, col)
     language: str - detected programming language
     api_key: str - Groq API key (optional, can use env var)
+    custom_prompt: str - Optional custom prompt to use instead of the default
     Returns: str - suggestion text
     """
     log_autocomplete_action("GROQ_API_CALL_START", f"language={language}, cursor={cursor_position}")
@@ -54,13 +55,16 @@ def get_groq_suggestion(buffer_lines, cursor_position, language, api_key=None):
         after += '\n' + '\n'.join(buffer_lines[cursor_position.row+1:])
     content = before + '|CURSOR|' + after
 
-    prompt = (
-        f"Complete the following {language} code at the |CURSOR| marker.\n"
-        f"Return ONLY the code that should be inserted at the cursor, inside a single code block (triple backticks). "
-        f"Do NOT include any explanation, commentary, or text except code.\n"
-        f"Code:\n{content}\n"
-        f"---"
-    )
+    if custom_prompt:
+        prompt = custom_prompt
+    else:
+        prompt = (
+            f"Complete the following {language} code at the |CURSOR| marker.\n"
+            f"Return ONLY the code that should be inserted at the cursor, inside a single code block (triple backticks). "
+            f"Do NOT include any explanation, commentary, or text except code.\n"
+            f"Code:\n{content}\n"
+            f"---"
+        )
     data = {
         "model": "mistral-saba-24b",
         "messages": [
