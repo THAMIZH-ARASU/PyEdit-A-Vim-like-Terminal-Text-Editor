@@ -131,16 +131,22 @@ class KeyHandler:
         fe = self.editor.file_explorer
         if key == 27 or key == ord('q'):
             self.editor.mode = Mode.NORMAL
+            self.editor.refresh_display()
         elif key == ord('j') or key == curses.KEY_DOWN:
             fe.move_down()
+            self.editor.refresh_display()
         elif key == ord('k') or key == curses.KEY_UP:
             fe.move_up()
+            self.editor.refresh_display()
         elif key == ord('l') or key == curses.KEY_RIGHT or key == ord('\n') or key == ord('\r'):
             result = fe.enter()
+            self.editor.refresh_display()
             if isinstance(result, str) and os.path.isfile(result):
                 self.editor.open_file_from_explorer(result)
         elif key == ord('h') or key == curses.KEY_LEFT or key in (curses.KEY_BACKSPACE, 127, 8):
             fe.back()
+            self.editor.refresh_display()
         elif key == ord('r'):
             fe.refresh()
+            self.editor.refresh_display()
         return False
