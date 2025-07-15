@@ -261,7 +261,7 @@ The file explorer is a two-pane sidebar:
 
 ## AI Tools
 
-PyEdit features a suite of AI-powered tools accessible via the command mode:
+PyEdit features a suite of AI-powered tools accessible via the command mode. These tools leverage the Groq API to help you write, understand, and manage code more efficiently.
 
 ### Usage
 Type `:ai <action> [args]` in command mode. Example:
@@ -279,12 +279,25 @@ Type `:ai <action> [args]` in command mode. Example:
 :ai snippet HTTP GET request in Python
 ```
 
-### Actions
-- **refactor, nl2code, translate, snippet, testgen:**
-  - The buffer is automatically updated with the AI's code output.
-  - A status message confirms the update.
-- **doc, explain, review, search, commitmsg, chat:**
-  - The result is always shown in a scrollable popup window, even for short responses.
+### AI Actions Explained
+
+- **refactor**: Refactors the current buffer for readability and efficiency. The buffer is replaced with the improved code.
+- **doc**: Generates a docstring or inline comments for the code in the buffer. The result is shown in a popup.
+- **explain**: Explains what the code in the buffer does in plain English. The explanation is shown in a popup.
+- **testgen**: Generates a unit test (e.g., pytest) for the code in the buffer. The buffer is replaced with the generated test code.
+- **review**: Reviews the code in the buffer and suggests improvements or points out bugs. The review is shown in a popup.
+- **nl2code <instruction>**: Converts a natural language instruction into code (e.g., `:ai nl2code create a function that sorts a list`). The buffer is replaced with the generated code.
+- **translate <language>**: Translates the code in the buffer to another language (e.g., `:ai translate javascript`). The buffer is replaced with the translated code.
+- **search <query>**: Performs a semantic search across all Python files in the project for code related to the query (e.g., `:ai search file I/O`). The results are shown in a popup.
+- **commitmsg**: Generates a concise git commit message for the current buffer's content. The message is shown in a popup.
+- **chat <message>**: Opens a chat with the AI for general programming questions or advice. The response is shown in a popup.
+- **snippet <description>**: Generates a code snippet based on a description (e.g., `:ai snippet HTTP GET request in Python`). The buffer is replaced with the generated snippet.
+
+#### Buffer-updating actions
+- `refactor`, `nl2code`, `translate`, `snippet`, `testgen` will automatically replace the buffer with the AI's code output.
+
+#### Popup actions
+- `doc`, `explain`, `review`, `search`, `commitmsg`, `chat` will always show their result in a scrollable popup window, even for short responses.
 
 ---
 

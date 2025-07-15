@@ -54,9 +54,30 @@ def ai_translate(buffer_lines, cursor_position, target_language):
 
 # 8. Smart code search (semantic)
 
-def ai_search(query, project_files):
-    prompt = f"Find all code related to: {query}"
-    return "[AI search is not yet implemented: would search project files for semantic matches]"
+def ai_search(query, project_files=None):
+    """
+    Semantic code search using Groq. Finds all .py files, reads up to 100 lines from each, and sends the query and code context to Groq.
+    """
+    if project_files is None:
+        # Recursively find all .py files in the project
+        project_files = []
+        for root, dirs, files in os.walk('.'):
+            for file in files:
+                if file.endswith('.py') and not file.startswith('.'):  # skip hidden files
+                    project_files.append(os.path.join(root, file))
+    # Read up to 100 lines from each file
+    code_context = []
+    for path in project_files:
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                lines = f.readlines()[:100]
+            code_context.append(f"File: {path}\n" + ''.join(lines))
+        except Exception:
+            continue
+    # Compose the prompt
+    prompt = f"Find all code related to: {query}\n\nProject files:\n" + '\n'.join(code_context)
+    # Use chat response for natural language output
+    return get_groq_chat_response([], prompt)
 
 # 9. Commit message generation
 
