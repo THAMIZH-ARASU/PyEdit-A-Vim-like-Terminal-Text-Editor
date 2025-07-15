@@ -90,4 +90,37 @@ def get_groq_suggestion(buffer_lines, cursor_position, language, api_key=None, c
         log_autocomplete_action("GROQ_API_COMPLETION_RECEIVED", code)
         return code
     log_autocomplete_action("GROQ_API_NO_COMPLETION")
+    return ""
+
+# New: Chat-style response for explanations, docs, reviews, etc.
+def get_groq_chat_response(buffer_lines, user_prompt, api_key=None):
+    """
+    Calls the Groq API for a natural language response (not code completion).
+    buffer_lines: List[str] - lines of the current buffer (context)
+    user_prompt: str - The user instruction/question
+    api_key: str - Groq API key (optional, can use env var)
+    Returns: str - AI's natural language response
+    """
+    if api_key is None:
+        api_key = os.environ.get("GROQ_API_KEY", "")
+    if not api_key:
+        raise ValueError("Groq API key not set. Set GROQ_API_KEY environment variable or .env file.")
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+    context = '\n'.join(buffer_lines)
+    messages = [
+        {"role": "system", "content": "You are a helpful programming assistant."},
+        {"role": "user", "content": f"{user_prompt}\n\nCode context:\n{context}"}
+    ]
+    data = {
+        "model": "mistral-saba-24b",
+        "messages": messages,
+        "max_tokens": 1024,
+        "temperature": 0.2
+    }
+    response = requests.post(url, json=data, headers=headers)
+    response.raise_for_status()
+    choices = response.json().get("choices", [])
+    if choices:
+        return choices[0]["message"]["content"].strip()
     return "" 
