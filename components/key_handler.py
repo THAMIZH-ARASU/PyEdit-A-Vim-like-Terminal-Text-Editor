@@ -75,6 +75,8 @@ class KeyHandler:
             self.editor.move_cursor(0, -1)
         elif key == curses.KEY_DOWN:
             self.editor.move_cursor(0, 1)
+        elif key == 9:  # Tab key
+            self.editor.autocomplete()
         elif 32 <= key <= 126:  # Printable characters
             self.editor.insert_char(chr(key))
         return False

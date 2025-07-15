@@ -9,7 +9,9 @@ from components.key_handler import KeyHandler
 from components.status_bar import StatusBar
 from core.buffer import Buffer
 from core.file_explorer import FileExplorer
+from core.grok_autocomplete import get_groq_suggestion # type: ignore
 from core.search_engine import SearchEngine
+from utils.language import detect_language # type: ignore
 from utils.mode import Mode
 from utils.position import Position
 
@@ -427,6 +429,21 @@ HELP:
         else:
             self.status_bar.set_message(f"Error opening file: {filepath}")
         self.mode = Mode.NORMAL
+
+    def autocomplete(self):
+        """Trigger Groq autocomplete and show suggestion in status bar."""
+        try:
+            filename = self.buffer.filename or ""
+            language = detect_language(filename)
+            buffer_lines = self.buffer.lines
+            cursor_position = self.buffer.cursor
+            suggestion = get_groq_suggestion(buffer_lines, cursor_position, language)
+            if suggestion:
+                self.status_bar.set_message(f"Autocomplete: {suggestion}")
+            else:
+                self.status_bar.set_message("No suggestion.")
+        except Exception as e:
+            self.status_bar.set_message(f"Autocomplete error: {e}")
 
     def _execute_command(self, command: Command) -> None:
         """Execute command and add to history"""
