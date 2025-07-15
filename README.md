@@ -62,45 +62,136 @@ python py_edit.py [filename]
 - **FILE EXPLORER:** File browser (press `e` or `:explorer`)
 
 ### Normal Mode Keys
-| Key         | Action                        |
-|-------------|------------------------------|
-| h/j/k/l     | Move left/down/up/right      |
-| i           | Enter insert mode            |
-| v           | Enter visual mode            |
-| :           | Enter command mode           |
-| /           | Enter search mode            |
-| e           | Open file explorer           |
-| x           | Delete character             |
-| o / O       | Insert line below/above      |
-| u           | Undo                         |
-| Ctrl+R      | Redo                         |
-| q           | Quit                         |
+<table>
+  <tr>
+    <th style="text-align:center;">Key</th>
+    <th style="text-align:center;">Action</th>
+  </tr>
+  <tr>
+    <td style="text-align:center;">h/j/k/l</td>
+    <td style="text-align:center;">Move left/down/up/right</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">i</td>
+    <td style="text-align:center;">Enter insert mode</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">v</td>
+    <td style="text-align:center;">Enter visual mode</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">:</td>
+    <td style="text-align:center;">Enter command mode</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">/</td>
+    <td style="text-align:center;">Enter search mode</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">e</td>
+    <td style="text-align:center;">Open file explorer</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">x</td>
+    <td style="text-align:center;">Delete character</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">o / O</td>
+    <td style="text-align:center;">Insert line below/above</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">u</td>
+    <td style="text-align:center;">Undo</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">Ctrl+R</td>
+    <td style="text-align:center;">Redo</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">q</td>
+    <td style="text-align:center;">Quit</td>
+  </tr>
+</table>
 
 ### Insert Mode
-| Key         | Action                        |
-|-------------|------------------------------|
-| ESC         | Return to normal mode        |
-| Enter       | New line                     |
-| Backspace   | Delete                       |
-| Tab         | AI autocomplete (if enabled) |
+<table>
+  <tr>
+    <th style="text-align:center;">Key</th>
+    <th style="text-align:center;">Action</th>
+  </tr>
+  <tr>
+    <td style="text-align:center;">ESC</td>
+    <td style="text-align:center;">Return to normal mode</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">Enter</td>
+    <td style="text-align:center;">New line</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">Backspace</td>
+    <td style="text-align:center;">Delete</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">Tab</td>
+    <td style="text-align:center;">AI autocomplete (if enabled)</td>
+  </tr>
+</table>
 
 ### Visual Mode
-| Key         | Action                        |
-|-------------|------------------------------|
-| d           | Delete selection             |
-| y           | Copy selection               |
-| ESC         | Return to normal mode        |
+<table>
+  <tr>
+    <th style="text-align:center;">Key</th>
+    <th style="text-align:center;">Action</th>
+  </tr>
+  <tr>
+    <td style="text-align:center;">d</td>
+    <td style="text-align:center;">Delete selection</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">y</td>
+    <td style="text-align:center;">Copy selection</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">ESC</td>
+    <td style="text-align:center;">Return to normal mode</td>
+  </tr>
+</table>
 
 ### Command Mode (`:`)
-| Command         | Action                        |
-|-----------------|------------------------------|
-| w               | Save file                    |
-| wq              | Save and quit                |
-| q               | Quit                         |
-| e <file>        | Open file                    |
-| w <file>        | Save as file                 |
-| explorer        | Toggle file explorer         |
-| help            | Show help manual             |
+<table>
+  <tr>
+    <th style="text-align:center;">Command</th>
+    <th style="text-align:center;">Action</th>
+  </tr>
+  <tr>
+    <td style="text-align:center;">w</td>
+    <td style="text-align:center;">Save file</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">wq</td>
+    <td style="text-align:center;">Save and quit</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">q</td>
+    <td style="text-align:center;">Quit</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">e &lt;file&gt;</td>
+    <td style="text-align:center;">Open file</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">w &lt;file&gt;</td>
+    <td style="text-align:center;">Save as file</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">explorer</td>
+    <td style="text-align:center;">Toggle file explorer</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">help</td>
+    <td style="text-align:center;">Show help manual</td>
+  </tr>
+</table>
 
 ### Search Mode (`/`)
 - Type pattern, Enter to search, ESC to cancel
@@ -115,14 +206,36 @@ The file explorer is a two-pane sidebar:
   - Or type `:explorer` in command mode (works from any mode)
 
 ### Explorer Navigation Keys
-| Key         | Action                                 |
-|-------------|----------------------------------------|
-| j / Down    | Move down                              |
-| k / Up      | Move up                                |
-| l / Right / Enter | Enter directory or open file      |
-| h / Left / Backspace | Go up to parent directory      |
-| r           | Refresh file list                      |
-| q / ESC     | Exit file explorer                     |
+<table>
+  <tr>
+    <th style="text-align:center;">Key</th>
+    <th style="text-align:center;">Action</th>
+  </tr>
+  <tr>
+    <td style="text-align:center;">j / Down</td>
+    <td style="text-align:center;">Move down</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">k / Up</td>
+    <td style="text-align:center;">Move up</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">l / Right / Enter</td>
+    <td style="text-align:center;">Enter directory or open file</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">h / Left / Backspace</td>
+    <td style="text-align:center;">Go up to parent directory</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">r</td>
+    <td style="text-align:center;">Refresh file list</td>
+  </tr>
+  <tr>
+    <td style="text-align:center;">q / ESC</td>
+    <td style="text-align:center;">Exit file explorer</td>
+  </tr>
+</table>
 
 - When you select a file and press Enter/l/right, it opens in the editor and exits explorer mode.
 - When you select a directory and press Enter/l/right, it enters that directory.
