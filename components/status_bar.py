@@ -21,4 +21,12 @@ class StatusBar:
         modified_text = " [+]" if buffer.modified else ""
         cursor_text = f"{buffer.cursor.row + 1},{buffer.cursor.col + 1}"
         
-        return f"{mode_text} | {file_text}{modified_text} | {cursor_text}"
+        # Get current AI model
+        try:
+            from core.ai_models import model_manager
+            current_model = model_manager.get_current_model()
+            model_text = f" | AI: {current_model}"
+        except:
+            model_text = ""
+        
+        return f"{mode_text} | {file_text}{modified_text} | {cursor_text}{model_text}"

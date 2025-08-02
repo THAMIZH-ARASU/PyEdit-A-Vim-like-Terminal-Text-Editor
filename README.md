@@ -19,6 +19,7 @@ PyEdit is a terminal-based text editor inspired by Vim, implemented in Python. I
 - **Command Mode:** Save, quit, open files, and more with `:commands`.
 - **Visual Mode:** Select, copy, and delete text visually.
 - **AI Autocomplete:** (Optional) Press Tab in insert mode for AI-powered code suggestions (requires configuration).
+- **Multi-Model AI Support:** Switch between different AI models (Groq, Gemini) for code completion and AI tools.
 - **AI Tools:** Use `:ai <action>` commands for code refactoring, documentation, explanation, translation, code generation, and more (see below).
 - **Lightweight & Fast:** Minimal dependencies, runs in any terminal with Python and curses.
 
@@ -259,9 +260,52 @@ The file explorer is a two-pane sidebar:
 
 ---
 
+## AI Model Configuration
+
+PyEdit supports multiple AI models for code completion and AI tools. You can switch between different models based on your preferences and API availability.
+
+### Supported Models
+
+- **Groq**: Fast, reliable AI model using Llama3-70B (requires `GROQ_API_KEY`)
+- **Gemini**: Google's latest Gemini 2.0 Flash model (requires `GEMINI_API_KEY`)
+
+### Setup
+
+1. **Get API Keys:**
+   - Groq: Sign up at [groq.com](https://groq.com) and get your API key
+   - Gemini: Get API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+
+2. **Configure Environment:**
+   Create a `.env` file in the project root:
+   ```bash
+   GROQ_API_KEY=your_groq_api_key_here
+   GEMINI_API_KEY=your_gemini_api_key_here
+   ```
+
+3. **Model Management:**
+   - View current model: `:ai model`
+   - Switch models: `:ai model groq` or `:ai model gemini`
+   - View available models: `:ai models`
+   - Get detailed info: `:ai info`
+
+### Model Switching
+
+The current AI model is displayed in the status bar. You can switch between models at any time:
+
+```bash
+:ai model groq      # Switch to Groq
+:ai model gemini    # Switch to Gemini
+:ai models          # Show available models
+:ai info            # Show detailed model information
+```
+
+Your model preference is automatically saved and will be restored when you restart PyEdit.
+
+---
+
 ## AI Tools
 
-PyEdit features a suite of AI-powered tools accessible via the command mode. These tools leverage the Groq API to help you write, understand, and manage code more efficiently.
+PyEdit features a suite of AI-powered tools accessible via the command mode. These tools leverage the currently selected AI model to help you write, understand, and manage code more efficiently.
 
 ### Usage
 Type `:ai <action> [args]` in command mode. Example:

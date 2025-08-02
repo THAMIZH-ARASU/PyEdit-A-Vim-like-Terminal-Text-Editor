@@ -62,6 +62,9 @@ COMMANDS (type : then command):
   w <file>  Save as file
   explorer  Toggle file explorer
   help      Show this help
+  ai model  Show current AI model
+  ai model <name>  Switch to AI model
+  ai models Show available AI models
 
 SEARCH (press /):
   Type pattern, Enter to search, ESC to cancel
@@ -74,6 +77,24 @@ FILE EXPLORER:
   r         Refresh file list
   ESC       Return to normal mode/editor
   (Sidebar can be toggled with :explorer or 'e')
+
+AI COMMANDS (type :ai <action>):
+  model     Show current AI model
+  model <name>  Switch to AI model (groq, gemini)
+  models    Show available AI models
+  info      Show detailed model information
+  debug     Show debug information
+  refactor  Refactor code for readability
+  doc       Generate documentation
+  explain   Explain what code does
+  testgen   Generate unit tests
+  review    Review code and suggest improvements
+  nl2code   Convert natural language to code
+  translate Translate code to another language
+  search    Semantic code search
+  commitmsg Generate commit message
+  chat      Interactive chat assistant
+  snippet   Generate code snippet
 
 HELP:
   q or ESC  Close help
@@ -467,7 +488,38 @@ HELP:
             result = None
             try:
                 code_actions = ["refactor", "nl2code", "translate", "snippet", "testgen"]
-                if action == "refactor":
+                
+                # Model switching commands
+                if action == "model":
+                    if not args:
+                        # Show current model and available models
+                        current = ai_tools.get_current_model()
+                        available = ai_tools.get_available_models()
+                        result = f"Current model: {current}\nAvailable models: {', '.join(available)}"
+                        self._show_ai_popup(result, heading="AI Models")
+                    else:
+                        # Switch to specified model
+                        model_name = args[0]
+                        result = ai_tools.set_current_model(model_name)
+                        self.status_bar.set_message(result)
+                        return
+                elif action == "models":
+                    # Show available models
+                    available = ai_tools.get_available_models()
+                    current = ai_tools.get_current_model()
+                    result = f"Available models:\n{', '.join(available)}\n\nCurrent model: {current}"
+                    self._show_ai_popup(result, heading="AI Models")
+                elif action == "info":
+                    # Show detailed model information
+                    available = ai_tools.get_available_models()
+                    current = ai_tools.get_current_model()
+                    result = f"AI Model Information:\n\nCurrent model: {current}\nAvailable models: {', '.join(available)}\n\nTo switch models, use:\n:ai model <model_name>\n\nExample:\n:ai model groq\n:ai model gemini"
+                    self._show_ai_popup(result, heading="AI Model Info")
+                elif action == "debug":
+                    # Show debug information
+                    result = ai_tools.debug_ai_status()
+                    self._show_ai_popup(result, heading="AI Debug Info")
+                elif action == "refactor":
                     result = ai_tools.ai_refactor(buffer_lines, cursor_position, language)
                 elif action == "doc":
                     result = ai_tools.ai_doc(buffer_lines, cursor_position, language)
@@ -507,8 +559,8 @@ HELP:
                     self.scroll_offset = Position(0, 0)
                     self.status_bar.set_message(f"Buffer updated by AI: {action}")
                     self.refresh_display()
-                # Always show popup for doc, explain, review, search, commitmsg, chat
-                elif action in ["doc", "explain", "review", "search", "commitmsg", "chat"] and result:
+                # Always show popup for doc, explain, review, search, commitmsg, chat, models, info, debug
+                elif action in ["doc", "explain", "review", "search", "commitmsg", "chat", "models", "info", "debug"] and result:
                     self._show_ai_popup(result, heading=f"AI {action.capitalize()}")
                 # Fallback: show in status bar
                 else:
