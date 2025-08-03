@@ -29,7 +29,7 @@ class KeyHandler:
             self.editor.mode = Mode.INSERT
         elif key == ord('v'):
             self.editor.mode = Mode.VISUAL
-            self.editor.visual_start = Position(self.editor.cursor.row, self.editor.cursor.col)
+            self.editor.visual_start = Position(self.editor.buffer.cursor.row, self.editor.buffer.cursor.col)
         elif key == ord(':'):
             self.editor.mode = Mode.COMMAND
             self.editor.command_buffer = ""

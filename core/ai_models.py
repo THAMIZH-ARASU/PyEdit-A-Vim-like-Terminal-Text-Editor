@@ -36,8 +36,8 @@ class GroqModel(AIModel):
     def __init__(self, api_key: Optional[str] = None):
         super().__init__("Groq", api_key)
         self.base_url = "https://api.groq.com/openai/v1/chat/completions"
-        self.default_model = "llama3-70b-8192"  # Updated to a more reliable model
-    
+        self.default_model = "llama3-70b-8192" 
+        
     def _get_api_key(self) -> str:
         return os.environ.get("GROQ_API_KEY", "")
     
